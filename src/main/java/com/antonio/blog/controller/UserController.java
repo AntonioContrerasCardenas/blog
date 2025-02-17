@@ -3,6 +3,7 @@ package com.antonio.blog.controller;
 import com.antonio.blog.dto.UserDto;
 import com.antonio.blog.service.UserService;
 import com.antonio.blog.utils.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         UserDto user = this.userService.createUser(userDto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id,@Valid @RequestBody UserDto userDto) {
         UserDto user = this.userService.updateUser(userDto, id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -46,11 +47,6 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = this.userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getSingleUser(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(this.userService.getUserById(userId));
     }
 
 }
