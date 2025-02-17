@@ -6,10 +6,12 @@ import com.antonio.blog.exception.ResourceNotFoundException;
 import com.antonio.blog.repository.UserRepo;
 import com.antonio.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -23,7 +25,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto, Integer userId) {
+    public UserDto updateUser(UserDto userDto, Long userId) {
 
         User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
@@ -38,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(Integer userId) {
+    public UserDto getUserById(Long userId) {
         User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         return this.userToUserDto(user);
     }
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deteleUser(Integer userId) {
+    public void deteleUser(Long userId) {
         this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         this.userRepo.deleteById(userId);
     }
