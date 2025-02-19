@@ -1,12 +1,13 @@
 package com.antonio.blog.dto;
 
 import com.antonio.blog.entity.Category;
+import com.antonio.blog.entity.Comment;
 import com.antonio.blog.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -26,4 +27,6 @@ public class PostDto {
     private UserDto user;
 
     private CategoryDto category;
+
+    private List<CommentDto> comments = new ArrayList<>();
 }

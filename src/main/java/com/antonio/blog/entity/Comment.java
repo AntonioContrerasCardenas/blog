@@ -6,16 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "role")
+@Table(name = "comments")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+@NoArgsConstructor
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id;
 
-    @Column(name = "name", nullable = false, unique = true, length = 50)
-    private String name;
+    @Column(name = "content", length = 5000, nullable = false)
+    private String content;
+
+    @ManyToOne
+    private Post post;
 }
