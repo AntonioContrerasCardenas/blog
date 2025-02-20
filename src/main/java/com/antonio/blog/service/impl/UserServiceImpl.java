@@ -1,12 +1,16 @@
 package com.antonio.blog.service.impl;
 
+import com.antonio.blog.config.AppConstants;
 import com.antonio.blog.dto.UserDto;
+import com.antonio.blog.entity.Role;
 import com.antonio.blog.entity.User;
 import com.antonio.blog.exception.ResourceNotFoundException;
+import com.antonio.blog.repository.RoleRepo;
 import com.antonio.blog.repository.UserRepo;
 import com.antonio.blog.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +24,27 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private RoleRepo roleRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDto registerNewUser(UserDto userDto) {
+        User user = this.modelMapper.map(userDto, User.class);
+
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+
+        Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();
+
+        user.getRoles().add(role);
+
+        User savedUser = this.userRepo.save(user);
+
+        return this.modelMapper.map(savedUser, UserDto.class);
+    }
 
     @Override
     public UserDto createUser(UserDto userDto) {

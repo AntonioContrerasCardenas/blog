@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +40,24 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ApiResponse(ex.getMessage(), false),
                 HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiResponse> handleApiException(ApiException ex) {
+        String message = ex.getMessage();
+        return new ResponseEntity<>(
+                new ApiResponse(message, false),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<ApiResponse> handleSqlException(SQLIntegrityConstraintViolationException ex) {
+        String message = ex.getMessage();
+        return new ResponseEntity<>(
+                new ApiResponse(message, false),
+                HttpStatus.BAD_REQUEST
         );
     }
 

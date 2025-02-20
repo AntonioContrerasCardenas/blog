@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
 @Data
 public class UserDto {
@@ -26,4 +29,6 @@ public class UserDto {
 
     @NotEmpty
     private String about;
+
+    private List<RoleDto> roles = new ArrayList<>();
 }

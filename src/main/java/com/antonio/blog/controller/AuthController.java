@@ -1,15 +1,19 @@
 package com.antonio.blog.controller;
 
+import com.antonio.blog.dto.UserDto;
+import com.antonio.blog.exception.ApiException;
 import com.antonio.blog.payload.JwtAuthRequest;
 import com.antonio.blog.security.CustomUserDetailService;
 import com.antonio.blog.security.JwtAuthResponse;
 import com.antonio.blog.security.JwtAuthResponse2;
+import com.antonio.blog.service.UserService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +39,9 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse2> createToken(
             @RequestBody JwtAuthRequest request
@@ -51,10 +58,21 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
+        UserDto user = this.userService.registerNewUser(userDto);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+
     private void create(String username, String password) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
 
-        this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        try {
+            this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        } catch (BadCredentialsException e) {
+            throw new ApiException("Invalid username o password");
+        }
 
 
     }
