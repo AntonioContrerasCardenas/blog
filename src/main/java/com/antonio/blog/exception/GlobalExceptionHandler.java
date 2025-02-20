@@ -3,6 +3,7 @@ package com.antonio.blog.exception;
 import com.antonio.blog.utils.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,6 +32,14 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<Map<String, String>>(resp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse> handleAuthenticationException(AuthenticationException ex) {
+        return new ResponseEntity<>(
+                new ApiResponse(ex.getMessage(), false),
+                HttpStatus.UNAUTHORIZED
+        );
     }
 
 //    @ExceptionHandler(FileUploadException.class)
