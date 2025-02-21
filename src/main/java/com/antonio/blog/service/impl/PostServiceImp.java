@@ -106,7 +106,7 @@ public class PostServiceImp implements PostService {
         postResponse.setTotalElements(postPages.getTotalElements());
         postResponse.setLastPage(postPages.isLast());
 
-        postResponse.setPosts(posts.stream().map(  (post) -> this.modelMapper.map(post, PostDto.class)).toList());
+        postResponse.setPosts(posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).toList());
 
         return postResponse;
 
@@ -118,7 +118,7 @@ public class PostServiceImp implements PostService {
 
         List<Post> posts = this.postRepo.findByCategory(category);
 
-        List<PostDto> postsDto = posts.stream().map(  (post) -> this.modelMapper.map(post, PostDto.class)).toList();
+        List<PostDto> postsDto = posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).toList();
 
         return postsDto;
     }
@@ -130,7 +130,7 @@ public class PostServiceImp implements PostService {
 
         List<Post> posts = this.postRepo.findByUser(user);
 
-        List<PostDto> postsDto = posts.stream().map(  (post) -> this.modelMapper.map(post, PostDto.class)).toList();
+        List<PostDto> postsDto = posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).toList();
 
         return postsDto;
     }
@@ -143,5 +143,12 @@ public class PostServiceImp implements PostService {
         List<PostDto> postsDto = posts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).toList();
 
         return postsDto;
+    }
+
+    @Override
+    public boolean isPostOwner(Long postId, Long userId) {
+        Post post = this.postRepo.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "Post Id : " + postId, 0));
+
+        return post.getUser().getId().equals(userId);
     }
 }

@@ -24,4 +24,6 @@ public interface PostService {
 
     List<PostDto> searchPosts(String searchTerm);
 
+    boolean isPostOwner(Long postId, Long userId);
+
 }
