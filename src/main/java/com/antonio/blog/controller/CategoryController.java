@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categories")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Categorías", description = "APIs para gestionar categorías")
 public class CategoryController {
 

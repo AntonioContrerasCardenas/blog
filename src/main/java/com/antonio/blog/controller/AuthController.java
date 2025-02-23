@@ -5,6 +5,7 @@ import com.antonio.blog.dto.UserDto;
 import com.antonio.blog.entity.User;
 import com.antonio.blog.exception.ApiException;
 import com.antonio.blog.payload.JwtAuthRequest;
+import com.antonio.blog.payload.RegisterUserBody;
 import com.antonio.blog.security.CustomUserDetailService;
 import com.antonio.blog.security.JwtAuthResponse;
 import com.antonio.blog.security.JwtAuthResponse2;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth/")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Autenticación", description = "APIs para registro y login de usuarios")
 public class AuthController {
     @Value("${jwt.secret}")
@@ -92,7 +95,15 @@ public class AuthController {
                     description = "Datos del nuevo usuario",
                     required = true
             )
-            @RequestBody UserDto userDto) {
+            @RequestBody RegisterUserBody userBody) {
+
+        UserDto userDto = new UserDto();
+        userDto.setName(userBody.getName());
+        userDto.setEmail(userBody.getEmail());
+        userDto.setPassword(userBody.getPassword());
+        userDto.setAbout(userBody.getAbout());
+
+
         UserDto user = this.userService.registerNewUser(userDto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }

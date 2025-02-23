@@ -5,6 +5,7 @@ import com.antonio.blog.entity.User;
 import com.antonio.blog.exception.AccessDeniedException;
 import com.antonio.blog.service.UserService;
 import com.antonio.blog.utils.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/v1/users")
 public class UserController {
 

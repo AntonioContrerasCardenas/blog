@@ -4,6 +4,8 @@ import com.antonio.blog.config.AppConstants;
 import com.antonio.blog.dto.PostDto;
 import com.antonio.blog.entity.Post;
 import com.antonio.blog.entity.User;
+import com.antonio.blog.payload.CreatePostBody;
+import com.antonio.blog.payload.UpdatePostBody;
 import com.antonio.blog.service.CategoryService;
 import com.antonio.blog.service.FileService;
 import com.antonio.blog.service.PostService;
@@ -15,8 +17,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +37,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Posts", description = "APIs para gestionar posts")
 public class PostController {
 
@@ -44,6 +49,10 @@ public class PostController {
 
     @Value("${project.image}")
     private String path;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
 
 //    @PostMapping("/user/{userId}/category/{categoryId}/posts")
 //    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto,
@@ -66,12 +75,15 @@ public class PostController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Datos del nuevo post",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = PostDto.class)))
-            @RequestBody PostDto postDto,
+                    content = @Content(schema = @Schema(implementation = CreatePostBody.class)))
+            @RequestBody CreatePostBody postBody,
             @PathVariable("categoryId") Long categoryId,
             Authentication authentication
     ) {
         User user = (User) authentication.getPrincipal();
+
+        PostDto postDto = this.modelMapper.map(postBody, PostDto.class);
+
         PostDto post = this.postService.createPost(postDto, user.getId(), categoryId);
         return new ResponseEntity<PostDto>(post, HttpStatus.CREATED);
     }
@@ -147,7 +159,12 @@ public class PostController {
             description = "Post actualizado exitosamente",
             content = @Content(schema = @Schema(implementation = PostDto.class)))
     @PutMapping("/{postId}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable("postId") Long postId, @RequestBody PostDto postDto, Authentication authentication) {
+    public ResponseEntity<PostDto> updatePost(@PathVariable("postId") Long postId,
+                                              @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                                                      description = "Datos para actualizar el post",
+                                                      required = true,
+                                                      content = @Content(schema = @Schema(implementation = UpdatePostBody.class)))
+                                              @RequestBody PostDto postDto, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         PostDto post = this.postService.updatePost(postDto, postId, user.getId());
         return new ResponseEntity<>(post, HttpStatus.OK);
