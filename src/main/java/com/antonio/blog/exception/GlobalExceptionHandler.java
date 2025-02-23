@@ -1,5 +1,6 @@
 package com.antonio.blog.exception;
 
+import com.antonio.blog.dto.ErrorResponse;
 import com.antonio.blog.utils.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,9 +8,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +48,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse> handleApiException(ApiException ex) {
+        String message = ex.getMessage();
+        return new ResponseEntity<>(
+                new ApiResponse(message, false),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+//    @ExceptionHandler(ApiException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ErrorResponse handleApiException2(ApiException ex) {
+//        return new ErrorResponse(
+//                LocalDateTime.now(),
+//                HttpStatus.BAD_REQUEST.value(),
+//                "Bad Request",
+//                ex.getMessage()
+//        );
+//    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
         String message = ex.getMessage();
         return new ResponseEntity<>(
                 new ApiResponse(message, false),

@@ -10,11 +10,11 @@ public interface PostService {
 
     PostDto createPost(PostDto postDto, Long userId, Long categoryId);
 
-    PostDto updatePost(PostDto postDto, Long id);
+    PostDto updatePost(PostDto postDto, Long id, Long userId);
 
     PostDto getPostById(Long id);
 
-    void deletePost(Long id);
+    void deletePost(Long id, Long userId);
 
     PostResponse getAllPosts(Integer pageNumber, Integer pageSize, String sort, String sortOrder);
 

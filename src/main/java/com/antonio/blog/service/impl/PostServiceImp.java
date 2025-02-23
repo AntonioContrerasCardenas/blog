@@ -4,6 +4,7 @@ import com.antonio.blog.dto.PostDto;
 import com.antonio.blog.entity.Category;
 import com.antonio.blog.entity.Post;
 import com.antonio.blog.entity.User;
+import com.antonio.blog.exception.AccessDeniedException;
 import com.antonio.blog.exception.ResourceNotFoundException;
 import com.antonio.blog.repository.CategoryRepo;
 import com.antonio.blog.repository.PostRepo;
@@ -39,6 +40,7 @@ public class PostServiceImp implements PostService {
 
     @Override
     public PostDto createPost(PostDto postDto, Long userId, Long categoryId) {
+        System.out.println("userId : " + userId);
 
         User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
@@ -56,9 +58,13 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public PostDto updatePost(PostDto postDto, Long id) {
+    public PostDto updatePost(PostDto postDto, Long id, Long currentUserId) {
 
         Post post = this.postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+
+        if (!post.getUser().getId().equals(currentUserId)) {
+            throw new AccessDeniedException("¡Acción no permitida! No eres el dueño de este post");
+        }
 
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
@@ -76,11 +82,16 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public void deletePost(Long id) {
+    public void deletePost(Long postId, Long currentUserId) {
 
-        this.postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        Post post = postRepo.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
-        this.postRepo.deleteById(id);
+        if (!post.getUser().getId().equals(currentUserId)) {
+            throw new AccessDeniedException("¡Acción no permitida! No puedes borrar este post");
+        }
+
+        postRepo.delete(post);
     }
 
     @Override
